@@ -9,6 +9,18 @@ struct Preset: Codable {
         set { keyCode = newValue?.code; keyMods = newValue?.mods; keyLabel = newValue?.label }
     }
 }
+// On the grid, keys 1 to 9 apply the first nine presets, and a preset whose shortcut ends in a letter also takes that
+// letter alone (⌃⌥F: F).
+let presetNumberKeys = [[kVK_ANSI_1, kVK_ANSI_2, kVK_ANSI_3, kVK_ANSI_4, kVK_ANSI_5, kVK_ANSI_6, kVK_ANSI_7, kVK_ANSI_8, kVK_ANSI_9],
+                        [kVK_ANSI_Keypad1, kVK_ANSI_Keypad2, kVK_ANSI_Keypad3, kVK_ANSI_Keypad4, kVK_ANSI_Keypad5,
+                         kVK_ANSI_Keypad6, kVK_ANSI_Keypad7, kVK_ANSI_Keypad8, kVK_ANSI_Keypad9]]
+extension Preset {
+    var gridLetter: Character? { keyLabel?.last.flatMap { $0.isLetter ? $0 : nil } }
+}
+func gridPreset(keyCode: Int) -> Preset? {
+    if let i = presetNumberKeys.lazy.compactMap({ $0.firstIndex(of: keyCode) }).first { return i < presets.count ? presets[i] : nil }
+    return presets.first { $0.gridLetter != nil && $0.keyCode == keyCode }
+}
 func movePreset(_ from: Int, to row: Int) {
     var p = presets
     guard p.indices.contains(from), (0...p.count).contains(row) else { return }
@@ -60,7 +72,7 @@ func newPreset(_ f: NSRect) {
     let name = NSTextField(frame: NSRect(x: 0, y: 40, width: 260, height: 24))
     name.placeholderString = "Name"; name.stringValue = "Preset \(presets.count + 1)"
     let key = ShortcutButton.make(nil, clearable: true)
-    if presets.count < 9 { dialog.informativeText = "Press \(presets.count + 1) on the grid to apply it. A global shortcut is optional." }
+    if presets.count < 9 { dialog.informativeText = "Press \(presets.count + 1) on the grid to apply it. A global shortcut is optional; its letter alone also applies it on the grid." }
     key.frame = NSRect(x: 0, y: 0, width: 260, height: 32)
     box.addSubview(name); box.addSubview(key)
     dialog.accessoryView = box

@@ -26,6 +26,7 @@ With the grid open, you can use these keys:
 | Return | Snap the window to the selection |
 | Tab | Move the selection to the next display |
 | 1 to 9 | Apply a [preset](#presets) |
+| A preset's letter | Apply the preset whose shortcut ends in that letter, such as F for ⌃⌥F |
 | Esc | Cancel |
 
 The selection starts on the cells that the window covers now. If you press Return without changing the selection, the window aligns to the grid.
@@ -44,7 +45,7 @@ A preset's shortcut snaps the window on the display that already holds it.
 
 ## Presets
 
-A preset is a saved area, such as the left half of the display. A Full screen preset on ⌃⌥F is built in.
+A preset is a saved area, such as the left half of the display. Four are built in: Full screen on ⌃⌥F, Left half on ⌃⌥L, Right half on ⌃⌥R and Centre on ⌃⌥C.
 
 To save a preset, select an area on the grid and hold Shift while you release the mouse or press Return. You can also click **+** in Settings.
 
@@ -52,7 +53,7 @@ You can apply a preset in three ways:
 
 - Press its shortcut, if it has one.
 - Choose it from the Presets menu in the GridSnap menu.
-- Open the grid and press a number key from 1 to 9. If the preset list is shown under the cells, you can also click the preset there.
+- Open the grid and press a number key from 1 to 9, or the letter of the preset's shortcut without its modifiers (F for ⌃⌥F). If the preset list is shown under the cells, you can also click the preset there.
 
 ## Undo a snap
 

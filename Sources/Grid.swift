@@ -14,9 +14,6 @@ var gridActive = false
 var original: (CGPoint, CGSize)?   // target window frame when the grid opened, restored on cancel
 var moved = false, dragging: GridView?
 var selected: GridView? { grids.first { $0.selection != nil } }
-let presetKeys = [[kVK_ANSI_1, kVK_ANSI_2, kVK_ANSI_3, kVK_ANSI_4, kVK_ANSI_5, kVK_ANSI_6, kVK_ANSI_7, kVK_ANSI_8, kVK_ANSI_9],
-                  [kVK_ANSI_Keypad1, kVK_ANSI_Keypad2, kVK_ANSI_Keypad3, kVK_ANSI_Keypad4, kVK_ANSI_Keypad5,
-                   kVK_ANSI_Keypad6, kVK_ANSI_Keypad7, kVK_ANSI_Keypad8, kVK_ANSI_Keypad9]]
 
 func preview() {   // live: the window follows the selection and snaps back when there is none
     guard let win = targetWindow else { return }
@@ -128,11 +125,6 @@ final class GridView: NSView {
         guard gridActive else { return }
         if e.keyCode == 53 { cancelGrid(); return }   // esc, also mid-drag
         let shift = e.modifierFlags.contains(.shift)
-        if e.modifierFlags.intersection([.command, .control, .option]).isEmpty,
-           let i = presetKeys.lazy.compactMap({ $0.firstIndex(of: Int(e.keyCode)) }).first {
-            if i < presets.count { commitGrid(preset: presets[i], on: screen) }
-            return
-        }
         switch e.specialKey {
         case .carriageReturn?, .enter?: commitGrid(save: shift)
         case .tab?: focus(1)
@@ -141,7 +133,10 @@ final class GridView: NSView {
         case .rightArrow?: step(1, 0, resize: shift)
         case .downArrow?: step(0, -1, resize: shift)
         case .upArrow?: step(0, 1, resize: shift)
-        default: break
+        default:
+            if e.modifierFlags.intersection([.command, .control, .option]).isEmpty, let p = gridPreset(keyCode: Int(e.keyCode)) {
+                commitGrid(preset: p, on: screen)
+            }
         }
     }
     func focus(_ by: Int) {   // tab moves the selection and the keyboard to the next display's grid; not mid-drag
@@ -220,7 +215,7 @@ final class GridView: NSView {
             let r = entryRect(i), cap = NSRect(x: r.minX + 2, y: r.midY - 8, width: 16, height: 16)
             if pressed == i { paint(box(r, look.preset), look.preset) }
             paint(box(cap, look.keycap), look.keycap)
-            let n = NSAttributedString(string: "\(i + 1)", attributes: [.font: NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .semibold), .foregroundColor: ink(look.keycap)])
+            let n = NSAttributedString(string: p.gridLetter.map(String.init) ?? "\(i + 1)", attributes: [.font: NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .semibold), .foregroundColor: ink(look.keycap)])
             n.draw(at: NSPoint(x: cap.midX - n.size().width / 2, y: cap.midY - n.size().height / 2))
             (p.name as NSString).draw(in: NSRect(x: cap.maxX + 6, y: r.minY + 2, width: r.maxX - cap.maxX - 12, height: 15),
                                       withAttributes: [.font: NSFont.systemFont(ofSize: 11), .foregroundColor: ink(look.preset), .paragraphStyle: style])
@@ -269,7 +264,7 @@ func showGrid() {
     if original == nil { targetWindow = nil }
     moved = false; dragging = nil
     let screens = NSScreen.screens, ghosts = ghostFrames(), top = NSScreen.screens[0].frame.maxY
-    let list = recordMode || !defaults.bool(forKey: "showList") ? [] : Array(presets.prefix(9))   // hiding the list leaves keys 1 to 9 working
+    let list = recordMode || !defaults.bool(forKey: "showList") ? [] : Array(presets.prefix(9))   // hiding the list leaves the grid keys working
     let header: CGFloat = targetApp != nil && defaults.bool(forKey: "showHeader") ? 52 : 0
     let dark = darkMode, theme = (try? loadTheme(themeID)) ?? (try! loadTheme("Default"))   // read on every open, so an edited theme file shows at once; a broken one falls back
     look = dark ? theme.dark : theme.light

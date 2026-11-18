@@ -7,7 +7,7 @@ GridSnap is an open source alternative to [Divvy](https://mizage.com/divvy/) for
 ## Features
 
 - The window follows your drag, so you see the result before you release. If you cancel, the window returns to where it was.
-- You can save an area as a preset and give it a global shortcut. A Full screen preset on ⌃⌥F is built in.
+- You can save an area as a preset and give it a global shortcut. Full screen (⌃⌥F), Left half (⌃⌥L), Right half (⌃⌥R) and Centre (⌃⌥C) are built in. On the grid, the letter alone applies a preset.
 - You can undo the last snap.
 - Every display gets its own grid, so you can move a window to another display by selecting cells there.
 - You choose the grid size, the gap between windows, and whether GridSnap moves the focused window or the one under the cursor.
