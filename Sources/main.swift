@@ -8,6 +8,7 @@ app.setActivationPolicy(.accessory)
 _ = statusItem   // globals outside main.swift are lazy; touching it builds the menu bar item
 
 func startApp() {
+    limitAXWaits()
     installHotKeyHandler()
     // clicks on other apps never reach the panel; a global monitor sees them and dismisses
     NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { _ in cancelGrid() }

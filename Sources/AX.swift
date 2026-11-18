@@ -4,6 +4,10 @@ var targetWindow: AXUIElement? { didSet { targetApp = targetWindow.flatMap(appOf
 private(set) var targetApp: NSRunningApplication?   // the app behind targetWindow; its icon and name head every panel
 var recordMode = false   // grid open only to pick a region for a new preset; nothing moves
 
+// Every AX call is made on the main thread and waits for the other app to answer. On the system-wide element the
+// timeout holds for the whole process, so an app that has hung costs a second per call, not the much longer system default.
+func limitAXWaits() { AXUIElementSetMessagingTimeout(AXUIElementCreateSystemWide(), 1) }
+
 func focusedWindow() -> AXUIElement? {
     guard let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier else { return nil }
     var ref: CFTypeRef?
