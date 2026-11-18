@@ -6,14 +6,9 @@ import Carbon
 // So does grace, the seconds a drag keeps its selection after leaving the panel; it has no control in Settings.
 let defaultPresets = [
     Preset(name: "Full screen", x: 0, y: 0, w: 1, h: 1, keyCode: kVK_ANSI_F, keyMods: optionKey | controlKey, keyLabel: "⌃⌥F"),
-    Preset(name: "Left half", x: 0, y: 0, w: 0.5, h: 1),
-    Preset(name: "Right half", x: 0.5, y: 0, w: 0.5, h: 1),
-    Preset(name: "Left two thirds", x: 0, y: 0, w: 2.0 / 3, h: 1),
-    Preset(name: "Right third", x: 2.0 / 3, y: 0, w: 1.0 / 3, h: 1),
-    Preset(name: "Centre", x: 1.0 / 6, y: 0.125, w: 2.0 / 3, h: 0.75),
-    Preset(name: "Top right quarter", x: 0.5, y: 0.5, w: 0.5, h: 0.5),
-    Preset(name: "Bottom half", x: 0, y: 0, w: 1, h: 0.5),
-    Preset(name: "Top half", x: 0, y: 0.5, w: 1, h: 0.5),
+    Preset(name: "Left half", x: 0, y: 0, w: 0.5, h: 1, keyCode: kVK_ANSI_L, keyMods: optionKey | controlKey, keyLabel: "⌃⌥L"),
+    Preset(name: "Right half", x: 0.5, y: 0, w: 0.5, h: 1, keyCode: kVK_ANSI_R, keyMods: optionKey | controlKey, keyLabel: "⌃⌥R"),
+    Preset(name: "Centre", x: 1.0 / 6, y: 0.125, w: 2.0 / 3, h: 0.75, keyCode: kVK_ANSI_C, keyMods: optionKey | controlKey, keyLabel: "⌃⌥C"),
 ]
 let defaults: UserDefaults = {
     let d = UserDefaults.standard

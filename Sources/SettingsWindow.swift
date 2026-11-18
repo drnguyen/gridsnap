@@ -164,7 +164,7 @@ let prefs: NSWindow = {
     let listCheck = NSButton(checkboxWithTitle: "Preset list", target: nil, action: nil)
     headerCheck.frame = NSRect(x: 118, y: 408, width: 170, height: 20); headerCheck.toolTip = "The app whose window will move, above the cells."
     listCheck.frame = NSRect(x: 118, y: 384, width: 170, height: 20)
-    listCheck.toolTip = "The first nine presets, under the cells. Keys 1 to 9 apply them whether or not the list is shown."
+    listCheck.toolTip = "The first nine presets, under the cells. Keys 1 to 9, and the letter of a preset's shortcut, apply them whether or not the list is shown."
     let marksCheck = NSButton(checkboxWithTitle: "Wider gaps at halves, thirds and quarters", target: nil, action: nil)
     marksCheck.frame = NSRect(x: 118, y: 360, width: 320, height: 20)
     marksCheck.toolTip = "Extra space between the cells where the display divides into halves, thirds and quarters."
