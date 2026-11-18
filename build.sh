@@ -4,7 +4,8 @@
 # No Xcode project: swiftc compiles every file in Sources/. Needs Command Line Tools with the macOS 26 SDK.
 # Signing: CODESIGN_IDENTITY, else a "Developer ID Application" certificate, else "GridSnap Dev", else ad-hoc.
 # Ad-hoc signatures change every build, which makes macOS forget the Accessibility grant (see docs/development.md).
-# A Developer ID build gets the hardened runtime, and `release` notarizes and staples it.
+# Every build gets the hardened runtime, so that no other process can load its own code into the app and use its
+# Accessibility grant. A Developer ID build is also notarized and stapled by `release`.
 # Notary credentials come from the keychain profile NOTARY_PROFILE (default gridsnap-notary).
 cd "$(dirname "$0")"
 APP=build/GridSnap.app
@@ -29,13 +30,14 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 </dict></plist>
 PLIST
 IDENTITY="${CODESIGN_IDENTITY:-$(security find-identity -v -p codesigning 2>/dev/null | grep -oE '"(Developer ID Application[^"]*|GridSnap Dev)"' | sort | head -1 | tr -d '"')}"
-case "$IDENTITY" in "Developer ID"*) SIGNFLAGS="--options runtime"; if [ "$1" = release ]; then SIGNFLAGS="$SIGNFLAGS --timestamp"; fi;; esac
+SIGNFLAGS="--options runtime"; DEVELOPER_ID=
+case "$IDENTITY" in "Developer ID"*) DEVELOPER_ID=1; if [ "$1" = release ]; then SIGNFLAGS="$SIGNFLAGS --timestamp"; fi;; esac
 codesign --force $SIGNFLAGS --sign "${IDENTITY:--}" "$APP"
 echo "built $APP (signed: ${IDENTITY:-ad-hoc})"
 if [ "$1" = release ]; then
   ZIP="build/GridSnap-$VERSION.zip"
   ditto -c -k --keepParent "$APP" "$ZIP"
-  if [ -n "$SIGNFLAGS" ]; then
+  if [ -n "$DEVELOPER_ID" ]; then
     xcrun notarytool submit "$ZIP" --keychain-profile "${NOTARY_PROFILE:-gridsnap-notary}" --wait
     xcrun stapler staple "$APP"
     ditto -c -k --keepParent "$APP" "$ZIP"
